@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>CampusRent</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:#F8FAFC;color:#0F172A;overflow-x:hidden}
+h1,h2,h3,h4{font-family:'Syne',sans-serif;line-height:1.2}
+a{text-decoration:none;color:inherit}
+button{cursor:pointer;font-family:'DM Sans',sans-serif;border:none;outline:none}
+input,select,textarea{font-family:'DM Sans',sans-serif;outline:none}
+img{display:block;width:100%}
+:root{
+  --blue:#2563EB;--blue-d:#1D4ED8;--blue-l:#EFF6FF;
+  --green:#22C55E;--green-d:#16A34A;
+  --dark:#0F172A;--dark2:#1E293B;--dark3:#334155;
+  --bg:#F8FAFC;--bg2:#F1F5F9;
+  --t2:#475569;--t3:#94A3B8;
+  --brd:#E2E8F0;
+  --sh:0 1px 3px rgba(0,0,0,.07),0 4px 16px rgba(0,0,0,.06);
+  --sh2:0 8px 32px rgba(0,0,0,.12);
+  --r:14px;--r2:8px;
+}
+#nav{position:fixed;top:0;left:0;right:0;z-index:999;height:62px;background:rgba(255,255,255,.95);backdrop-filter:blur(16px);border-bottom:1px solid var(--brd);display:flex;align-items:center}
+.nav-in{max-width:1280px;margin:0 auto;padding:0 24px;width:100%;display:flex;align-items:center;gap:8px}
+.nav-logo{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;display:flex;align-items:center;gap:8px;cursor:pointer}
+.logo-box{width:32px;height:32px;background:var(--blue);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px}
+.logo-txt span{color:var(--blue)}
+.nav-links{display:flex;align-items:center;gap:2px;margin-left:auto}
+.nav-links button{padding:8px 14px;border-radius:8px;font-size:14px;font-weight:500;color:var(--dark3);background:none;transition:background .15s,color .15s}
+.nav-links button:hover{background:var(--bg2);color:var(--dark)}
+.nav-links button.active{background:var(--blue-l);color:var(--blue);font-weight:600}
+.nav-cta{display:flex;gap:8px;margin-left:16px}
+.btn-ghost{padding:8px 18px;border-radius:50px;border:1.5px solid var(--brd);background:#fff;font-size:14px;font-weight:500;color:var(--dark);transition:all .15s}
+.btn-ghost:hover{border-color:var(--blue);color:var(--blue)}
+.btn-blue{padding:8px 20px;border-radius:50px;background:var(--blue);color:#fff;font-size:14px;font-weight:600;transition:all .15s}
+.btn-blue:hover{background:var(--blue-d);transform:translateY(-1px)}
+#app{padding-top:62px;min-height:100vh}
+#toast{position:fixed;bottom:24px;right:24px;z-index:9999;background:var(--dark2);color:#fff;padding:13px 20px;border-radius:10px;font-size:14px;font-weight:500;box-shadow:var(--sh2);transform:translateY(100px);opacity:0;transition:all .3s;pointer-events:none}
+#toast.show{transform:translateY(0);opacity:1}
+.container{max-width:1280px;margin:0 auto;padding:0 24px}
+.sec{padding:72px 0}
+.sec-tag{display:inline-block;background:var(--blue-l);color:var(--blue);font-size:11px;font-weight:700;padding:4px 12px;border-radius:50px;text-transform:uppercase;letter-spacing:.6px;margin-bottom:12px}
+.sec-title{font-size:clamp(24px,3vw,36px);font-weight:800;color:var(--dark)}
+.sec-sub{font-size:16px;color:var(--t2);margin-top:8px}
+.sec-hd{text-align:center;margin-bottom:44px}
+.grid-4{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:22px}
+.grid-3{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:22px}
+.ic{background:#fff;border-radius:var(--r);box-shadow:var(--sh);overflow:hidden;transition:transform .2s,box-shadow .2s;cursor:pointer}
+.ic:hover{transform:translateY(-4px);box-shadow:var(--sh2)}
+.ic-img{position:relative;aspect-ratio:4/3;overflow:hidden;background:var(--bg2)}
+.ic-img img{height:100%;object-fit:cover;transition:transform .3s}
+.ic:hover .ic-img img{transform:scale(1.05)}
+.ic-avail{position:absolute;top:10px;left:10px;background:var(--green);color:#fff;font-size:10px;font-weight:700;padding:3px 9px;border-radius:50px;text-transform:uppercase;letter-spacing:.5px}
+.ic-unavail{background:#94A3B8}
+.ic-fav{position:absolute;top:10px;right:10px;width:30px;height:30px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;font-size:15px;box-shadow:0 2px 8px rgba(0,0,0,.15);cursor:pointer;transition:transform .15s;border:none}
+.ic-fav:hover{transform:scale(1.12)}
+.ic-body{padding:15px}
+.ic-cat{font-size:10px;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px}
+.ic-name{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--dark);margin-bottom:8px;line-height:1.3}
+.ic-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.ic-price{font-weight:700;font-size:15px}
+.ic-price span{font-size:12px;color:var(--t2);font-weight:400}
+.ic-star{display:flex;align-items:center;gap:3px;font-size:12px;color:var(--t2)}
+.star{color:#F59E0B}
+.ic-loc{font-size:12px;color:var(--t3);margin-bottom:13px}
+.ic-btn{width:100%;padding:9px;background:var(--bg2);color:var(--blue);border-radius:var(--r2);font-size:13px;font-weight:600;transition:background .15s,color .15s}
+.ic-btn:hover{background:var(--blue);color:#fff}
+.hero{background:linear-gradient(135deg,#0F172A 0%,#1E3A6E 55%,#2563EB 100%);padding:90px 24px 72px;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 60% 40%,rgba(37,99,235,.3) 0%,transparent 60%)}
+.hero-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#fff;font-size:13px;font-weight:500;padding:6px 14px;border-radius:50px;margin-bottom:24px;position:relative}
+.hero-badge b{color:var(--green)}
+.hero h1{font-size:clamp(32px,5vw,60px);font-weight:800;color:#fff;margin-bottom:18px;max-width:760px;margin-left:auto;margin-right:auto;letter-spacing:-1px;position:relative}
+.hero h1 em{color:#93C5FD;font-style:normal}
+.hero p{font-size:17px;color:rgba(255,255,255,.72);max-width:500px;margin:0 auto 36px;position:relative}
+.hero-search{max-width:580px;margin:0 auto 28px;display:flex;background:#fff;border-radius:50px;box-shadow:0 8px 32px rgba(0,0,0,.3);overflow:hidden;padding:5px 5px 5px 20px;position:relative}
+.hero-search input{flex:1;border:none;font-size:15px;color:var(--dark);background:transparent;min-width:0}
+.hero-search input::placeholder{color:var(--t3)}
+.hero-search button{background:var(--blue);color:#fff;padding:10px 24px;border-radius:50px;font-size:14px;font-weight:600;white-space:nowrap;transition:background .15s}
+.hero-search button:hover{background:var(--blue-d)}
+.hero-ctas{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;position:relative}
+.btn-green{padding:12px 28px;border-radius:50px;background:var(--green);color:#fff;font-size:15px;font-weight:600;transition:all .15s}
+.btn-green:hover{background:var(--green-d);transform:translateY(-2px)}
+.btn-outline-w{padding:12px 28px;border-radius:50px;background:rgba(255,255,255,.12);border:1.5px solid rgba(255,255,255,.25);color:#fff;font-size:15px;font-weight:500;transition:all .15s}
+.btn-outline-w:hover{background:rgba(255,255,255,.22)}
+.hero-stats{display:flex;gap:40px;justify-content:center;margin-top:56px;flex-wrap:wrap;position:relative}
+.hs{text-align:center}
+.hs strong{display:block;font-family:'Syne',sans-serif;font-size:26px;font-weight:800;color:#fff}
+.hs span{font-size:12px;color:rgba(255,255,255,.55)}
+.how{background:var(--dark);padding:72px 0}
+.how .sec-tag{background:rgba(255,255,255,.1);color:rgba(255,255,255,.7)}
+.how .sec-title{color:#fff}
+.how .sec-sub{color:rgba(255,255,255,.45)}
+.how-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:24px}
+.how-card{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:var(--r);padding:32px;text-align:center;position:relative}
+.how-num{position:absolute;top:-13px;left:50%;transform:translateX(-50%);width:26px;height:26px;border-radius:50%;background:var(--blue);color:#fff;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif}
+.how-ico{width:54px;height:54px;border-radius:14px;background:rgba(37,99,235,.25);margin:0 auto 18px;display:flex;align-items:center;justify-content:center;font-size:26px}
+.how-card h3{font-size:17px;font-weight:700;color:#fff;margin-bottom:10px}
+.how-card p{font-size:13px;color:rgba(255,255,255,.45);line-height:1.75}
+.cats{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:14px}
+.cat{background:#fff;border-radius:var(--r);padding:24px 14px;text-align:center;box-shadow:var(--sh);cursor:pointer;transition:all .2s;border:2px solid transparent}
+.cat:hover{border-color:var(--blue);transform:translateY(-3px)}
+.cat-ico{font-size:32px;margin-bottom:10px}
+.cat-name{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--dark)}
+.cat-cnt{font-size:11px;color:var(--t3);margin-top:3px}
+.testi-wrap{background:var(--bg2);padding:72px 0}
+.testi-card{background:#fff;border-radius:var(--r);padding:26px;box-shadow:var(--sh)}
+.tc-stars{color:#F59E0B;font-size:14px;margin-bottom:12px}
+.tc-text{font-size:14px;color:var(--t2);line-height:1.8;margin-bottom:18px;font-style:italic}
+.tc-user{display:flex;align-items:center;gap:10px}
+.tc-av{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;color:#fff;font-size:14px}
+.tc-name{font-weight:600;font-size:13px;color:var(--dark)}
+.tc-uni{font-size:11px;color:var(--t3)}
+footer{background:var(--dark);padding:56px 0 28px}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:36px;margin-bottom:44px}
+.f-brand p{font-size:13px;color:rgba(255,255,255,.45);line-height:1.8;margin-top:12px}
+.f-col h4{font-family:'Syne',sans-serif;font-size:11px;font-weight:700;color:#fff;text-transform:uppercase;letter-spacing:1px;margin-bottom:14px}
+.f-col ul{list-style:none}
+.f-col li{margin-bottom:8px}
+.f-col a{font-size:13px;color:rgba(255,255,255,.45);transition:color .15s}
+.f-col a:hover{color:#fff}
+.f-bottom{border-top:1px solid rgba(255,255,255,.07);padding-top:22px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+.f-bottom p{font-size:12px;color:rgba(255,255,255,.35)}
+.browse-wrap{max-width:1280px;margin:0 auto;padding:28px 24px;display:grid;grid-template-columns:268px 1fr;gap:28px;align-items:start}
+.fsidebar{background:#fff;border-radius:var(--r);box-shadow:var(--sh);padding:22px;position:sticky;top:76px}
+.fs-title{font-family:'Syne',sans-serif;font-size:15px;font-weight:800;margin-bottom:22px}
+.fs-grp{margin-bottom:22px}
+.fs-grp h4{font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px}
+.fopt{display:flex;align-items:center;gap:8px;margin-bottom:7px;cursor:pointer}
+.fopt input{accent-color:var(--blue);cursor:pointer}
+.fopt label{font-size:13px;color:var(--t2);cursor:pointer}
+.frange{width:100%;accent-color:var(--blue);margin-top:4px}
+.frange-vals{display:flex;justify-content:space-between;font-size:11px;color:var(--t3);margin-top:3px}
+.apply-btn{width:100%;padding:11px;background:var(--blue);color:#fff;border-radius:var(--r2);font-size:13px;font-weight:600;margin-top:6px;transition:background .15s}
+.apply-btn:hover{background:var(--blue-d)}
+.browse-topbar{display:flex;align-items:center;gap:12px;margin-bottom:22px;flex-wrap:wrap}
+.b-search{flex:1;display:flex;min-width:200px;background:#fff;border:1.5px solid var(--brd);border-radius:50px;overflow:hidden;padding:5px 5px 5px 16px}
+.b-search input{flex:1;border:none;font-size:14px;color:var(--dark);background:transparent}
+.b-search button{background:var(--blue);color:#fff;padding:7px 18px;border-radius:50px;font-size:13px;font-weight:600}
+.b-sort select{padding:9px 14px;border:1.5px solid var(--brd);border-radius:50px;font-size:13px;color:var(--dark);background:#fff;cursor:pointer}
+.b-count{font-size:13px;color:var(--t2);white-space:nowrap}
+.pag{display:flex;justify-content:center;gap:7px;margin-top:36px}
+.pag-btn{width:34px;height:34px;border-radius:var(--r2);background:#fff;border:1.5px solid var(--brd);font-size:13px;font-weight:500;color:var(--dark);transition:all .15s}
+.pag-btn:hover,.pag-btn.on{background:var(--blue);color:#fff;border-color:var(--blue)}
+.detail-wrap{max-width:1100px;margin:0 auto;padding:36px 24px;display:grid;grid-template-columns:1fr 340px;gap:36px;align-items:start}
+.d-gallery{}
+.d-main-img{aspect-ratio:16/10;border-radius:var(--r);overflow:hidden;background:var(--bg2)}
+.d-main-img img{height:100%;object-fit:cover}
+.d-thumbs{display:flex;gap:8px;margin-top:8px}
+.d-thumb{width:70px;height:52px;border-radius:7px;overflow:hidden;cursor:pointer;border:2px solid transparent;flex-shrink:0;background:var(--bg2)}
+.d-thumb img{height:100%;object-fit:cover}
+.d-thumb.on{border-color:var(--blue)}
+.d-info{margin-top:26px}
+.d-toprow{display:flex;align-items:center;gap:10px;margin-bottom:7px}
+.d-cat{font-size:11px;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:.5px}
+.d-avail{background:#DCFCE7;color:#16A34A;font-size:11px;font-weight:700;padding:3px 10px;border-radius:50px}
+.d-title{font-size:26px;font-weight:800;color:var(--dark);margin-bottom:10px}
+.d-meta{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:18px;font-size:13px;color:var(--t2)}
+.d-owner{display:flex;align-items:center;gap:12px;background:var(--bg2);border-radius:var(--r2);padding:14px;margin-bottom:22px}
+.o-av{width:42px;height:42px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;color:#fff;font-size:16px;background:linear-gradient(135deg,var(--blue),var(--blue-d))}
+.o-info h4{font-size:14px;font-weight:700;color:var(--dark)}
+.o-info p{font-size:12px;color:var(--t2)}
+.d-desc h3{font-size:15px;font-weight:700;margin-bottom:8px}
+.d-desc p{font-size:14px;color:var(--t2);line-height:1.8}
+.bk-card{background:#fff;border-radius:var(--r);box-shadow:var(--sh2);padding:22px;border:1px solid var(--brd);position:sticky;top:76px}
+.bk-price{font-size:26px;font-weight:800;color:var(--dark)}
+.bk-price span{font-size:14px;font-weight:400;color:var(--t2)}
+.bk-rate{display:flex;align-items:center;gap:4px;font-size:12px;color:var(--t2);margin:4px 0 18px}
+.bk-fg{margin-bottom:13px}
+.bk-fg label{font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.6px;display:block;margin-bottom:5px}
+.bk-fg input{width:100%;padding:9px 12px;border:1.5px solid var(--brd);border-radius:var(--r2);font-size:13px;color:var(--dark);transition:border-color .15s}
+.bk-fg input:focus{border-color:var(--blue)}
+.bk-total{background:var(--bg2);border-radius:var(--r2);padding:14px;margin-bottom:14px}
+.bk-row{display:flex;justify-content:space-between;font-size:13px;color:var(--t2);margin-bottom:7px}
+.bk-row.bold{font-weight:700;color:var(--dark);font-size:14px;border-top:1px solid var(--brd);padding-top:7px;margin-top:3px;margin-bottom:0}
+.bk-book{width:100%;padding:13px;background:var(--blue);color:#fff;border-radius:var(--r2);font-size:14px;font-weight:700;margin-bottom:9px;transition:background .15s}
+.bk-book:hover{background:var(--blue-d)}
+.bk-msg{width:100%;padding:11px;background:#fff;color:var(--dark);border:1.5px solid var(--brd);border-radius:var(--r2);font-size:13px;font-weight:600;transition:border-color .15s}
+.bk-msg:hover{border-color:var(--dark)}
+.post-wrap{max-width:720px;margin:0 auto;padding:36px 24px}
+.post-hd h1{font-size:28px;font-weight:800;margin-bottom:6px}
+.post-hd p{font-size:14px;color:var(--t2);margin-bottom:28px}
+.pcard{background:#fff;border-radius:var(--r);box-shadow:var(--sh);padding:28px;margin-bottom:20px}
+.pcard-ttl{font-family:'Syne',sans-serif;font-size:14px;font-weight:800;color:var(--dark);margin-bottom:18px;padding-bottom:12px;border-bottom:1px solid var(--brd)}
+.fg{margin-bottom:16px}
+.fg label{font-size:12px;font-weight:600;color:var(--t2);display:block;margin-bottom:5px}
+.fg input,.fg select,.fg textarea{width:100%;padding:10px 13px;border:1.5px solid var(--brd);border-radius:var(--r2);font-size:14px;color:var(--dark);transition:border-color .15s}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--blue)}
+.fg textarea{resize:vertical;min-height:95px}
+.fg-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.upload-zone{border:2px dashed var(--brd);border-radius:var(--r);padding:36px 20px;text-align:center;cursor:pointer;transition:all .15s}
+.upload-zone:hover{border-color:var(--blue);background:var(--blue-l)}
+.upload-zone p{font-size:14px;color:var(--t2);margin-top:8px}
+.upload-zone small{font-size:12px;color:var(--t3)}
+.pub-btn{width:100%;padding:15px;background:var(--blue);color:#fff;border-radius:var(--r2);font-size:15px;font-weight:700;transition:background .15s}
+.pub-btn:hover{background:var(--blue-d)}
+.dash-wrap{max-width:1280px;margin:0 auto;padding:28px 24px;display:grid;grid-template-columns:230px 1fr;gap:26px;align-items:start}
+.sidebar{background:#fff;border-radius:var(--r);box-shadow:var(--sh);overflow:hidden;position:sticky;top:76px}
+.sb-top{padding:22px;text-align:center;background:linear-gradient(135deg,var(--dark),var(--dark2))}
+.sb-av{width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,var(--blue),var(--green));display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;color:#fff;font-size:22px;margin:0 auto 10px;border:3px solid rgba(255,255,255,.2)}
+.sb-name{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:#fff}
+.sb-uni{font-size:11px;color:rgba(255,255,255,.45);margin-top:2px}
+.sb-nav{padding:10px 0}
+.sb-nav button{display:flex;align-items:center;gap:10px;width:100%;padding:10px 18px;font-size:13px;font-weight:500;color:var(--t2);background:none;text-align:left;transition:all .15s}
+.sb-nav button:hover,.sb-nav button.on{background:var(--blue-l);color:var(--blue)}
+.sb-nav button.on{font-weight:700}
+.sb-ico{font-size:17px;width:20px;text-align:center}
+.stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:26px}
+.scard{background:#fff;border-radius:var(--r);box-shadow:var(--sh);padding:18px}
+.scard-lbl{font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:7px}
+.scard-val{font-family:'Syne',sans-serif;font-size:24px;font-weight:800;color:var(--dark)}
+.scard-chg{font-size:11px;margin-top:4px}
+.chg-up{color:var(--green)}
+.sec-hd2{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.sec-hd2 h2{font-size:17px;font-weight:800;color:var(--dark)}
+.sec-hd2 a{font-size:12px;color:var(--blue);font-weight:600;cursor:pointer}
+.tbl{background:#fff;border-radius:var(--r);box-shadow:var(--sh);overflow:hidden;margin-bottom:26px}
+.tbl table{width:100%;border-collapse:collapse}
+.tbl th{background:var(--bg2);font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.7px;padding:11px 15px;text-align:left}
+.tbl td{padding:13px 15px;font-size:13px;color:var(--t2);border-top:1px solid var(--brd)}
+.tbl tr:hover td{background:var(--bg2)}
+.badge{display:inline-block;padding:3px 9px;border-radius:50px;font-size:10px;font-weight:700}
+.b-green{background:#DCFCE7;color:#16A34A}
+.b-yellow{background:#FEF9C3;color:#CA8A04}
+.b-purple{background:#E0E7FF;color:#4F46E5}
+.lc{background:#fff;border-radius:var(--r);box-shadow:var(--sh);padding:15px;display:flex;gap:14px;align-items:center;margin-bottom:14px}
+.lc-img{width:76px;height:60px;border-radius:var(--r2);overflow:hidden;flex-shrink:0;background:var(--bg2)}
+.lc-img img{height:100%;object-fit:cover}
+.lc-info{flex:1}
+.lc-name{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:var(--dark)}
+.lc-sub{font-size:12px;color:var(--t2);margin-top:2px}
+.lc-acts{display:flex;gap:7px;flex-wrap:wrap}
+.bs{padding:6px 13px;border-radius:var(--r2);font-size:12px;font-weight:600;transition:all .15s}
+.bs-edit{background:var(--bg2);color:var(--dark)}
+.bs-edit:hover{background:var(--brd)}
+.bs-del{background:#FEE2E2;color:#DC2626}
+.bs-del:hover{background:#FCA5A5}
+.bs-view{background:var(--blue-l);color:var(--blue)}
+.bs-view:hover{background:#DBEAFE}
+.msg-wrap{max-width:1080px;margin:0 auto;padding:24px}
+.msg-box{background:#fff;border-radius:var(--r);box-shadow:var(--sh);display:grid;grid-template-columns:280px 1fr;overflow:hidden;height:calc(100vh - 110px)}
+.msg-list-panel{border-right:1px solid var(--brd);display:flex;flex-direction:column;overflow:hidden}
+.mlp-head{padding:18px 18px 14px;font-family:'Syne',sans-serif;font-size:15px;font-weight:800;border-bottom:1px solid var(--brd)}
+.ml-scroll{flex:1;overflow-y:auto}
+.mi{display:flex;align-items:center;gap:11px;padding:13px 16px;cursor:pointer;border-bottom:1px solid var(--brd);transition:background .12s}
+.mi:hover,.mi.on{background:var(--blue-l)}
+.m-av{width:38px;height:38px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff;font-size:13px;font-family:'Syne',sans-serif}
+.mi-info{flex:1;min-width:0}
+.mi-name{font-size:13px;font-weight:600;color:var(--dark)}
+.mi-prev{font-size:11px;color:var(--t3);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mi-time{font-size:10px;color:var(--t3);white-space:nowrap}
+.mi-dot{width:7px;height:7px;border-radius:50%;background:var(--blue);flex-shrink:0}
+.chat-panel{display:flex;flex-direction:column;overflow:hidden}
+.chat-head{padding:14px 18px;border-bottom:1px solid var(--brd);display:flex;align-items:center;gap:11px}
+.ch-info h3{font-size:14px;font-weight:700;color:var(--dark)}
+.ch-info p{font-size:11px;color:var(--t3)}
+.chat-body{flex:1;overflow-y:auto;padding:18px;display:flex;flex-direction:column;gap:10px}
+.bubble{max-width:68%;padding:10px 14px;border-radius:14px;font-size:13px;line-height:1.6}
+.b-them{background:var(--bg2);color:var(--dark);align-self:flex-start;border-bottom-left-radius:3px}
+.b-me{background:var(--blue);color:#fff;align-self:flex-end;border-bottom-right-radius:3px}
+.b-time{font-size:10px;opacity:.55;margin-top:3px;text-align:right}
+.chat-input{padding:14px 18px;border-top:1px solid var(--brd);display:flex;gap:9px}
+.ci{flex:1;padding:9px 16px;border:1.5px solid var(--brd);border-radius:50px;font-size:13px;color:var(--dark);transition:border-color .15s}
+.ci:focus{border-color:var(--blue)}
+.cs{width:38px;height:38px;border-radius:50%;background:var(--blue);color:#fff;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.profile-wrap{max-width:780px;margin:0 auto;padding:36px 24px}
+.prof-banner{height:130px;border-radius:var(--r) var(--r) 0 0;background:linear-gradient(135deg,var(--dark),var(--blue))}
+.prof-card{background:#fff;border-radius:0 0 var(--r) var(--r);box-shadow:var(--sh);padding:0 24px 24px;margin-bottom:22px}
+.prof-av-row{display:flex;justify-content:space-between;align-items:flex-end;margin-top:-42px;margin-bottom:14px}
+.prof-av{width:84px;height:84px;border-radius:50%;background:linear-gradient(135deg,var(--blue),var(--green));display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;color:#fff;font-size:30px;border:4px solid #fff;box-shadow:var(--sh)}
+.edit-btn{padding:8px 18px;border-radius:50px;border:1.5px solid var(--brd);background:#fff;font-size:13px;font-weight:600;color:var(--dark);transition:all .15s}
+.edit-btn:hover{border-color:var(--blue);color:var(--blue)}
+.prof-name{font-size:20px;font-weight:800;color:var(--dark)}
+.prof-uni{font-size:13px;color:var(--t2);margin-top:2px}
+.prof-stats{display:flex;gap:22px;margin-top:14px;flex-wrap:wrap}
+.ps{text-align:center}
+.ps strong{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;display:block}
+.ps span{font-size:11px;color:var(--t3)}
+.rv-ttl{font-size:16px;font-weight:800;margin-bottom:14px}
+.rv-card{background:#fff;border-radius:var(--r2);box-shadow:var(--sh);padding:18px;margin-bottom:12px}
+.rv-stars{color:#F59E0B;font-size:13px;margin-bottom:7px}
+.rv-text{font-size:13px;color:var(--t2);line-height:1.75;margin-bottom:9px}
+.rv-auth{font-size:12px;font-weight:600;color:var(--dark)}
+@media(max-width:1024px){.footer-grid{grid-template-columns:1fr 1fr}.stat-row{grid-template-columns:1fr 1fr}.browse-wrap{grid-template-columns:1fr}.fsidebar{position:static}.detail-wrap{grid-template-columns:1fr}.bk-card{position:static}}
+@media(max-width:768px){.nav-links,.nav-cta{display:none}.dash-wrap{grid-template-columns:1fr}.sidebar{position:static}.msg-box{grid-template-columns:1fr;height:auto}.msg-list-panel{border-right:none;border-bottom:1px solid var(--brd);max-height:200px}.footer-grid{grid-template-columns:1fr}.fg-row{grid-template-columns:1fr}.stat-row{grid-template-columns:1fr 1fr}}
+@media(max-width:480px){.stat-row{grid-template-columns:1fr}.lc-acts{flex-direction:column}}
+</style>
+</head>
+<body>
+<nav id="nav">
+  <div class="nav-in">
+    <div class="nav-logo" onclick="go('home')">
+      <div class="logo-box">🎓</div>
+      <div class="logo-txt">Campus<span>Rent</span></div>
+    </div>
+    <div class="nav-links">
+      <button id="nb-home" onclick="go('home')">Home</button>
+      <button id="nb-browse" onclick="go('browse')">Browse</button>
+      <button id="nb-post" onclick="go('post')">List an Item</button>
+      <button id="nb-dashboard" onclick="go('dashboard')">Dashboard</button>
+      <button id="nb-messages" onclick="go('messages')">Messages</button>
+    </div>
+    <div class="nav-cta">
+      <button class="btn-ghost" onclick="go('profile')">Profile</button>
+      <button class="btn-blue" onclick="go('post')">+ List Item</button>
+    </div>
+  </div>
+</nav>
+<div id="app"></div>
+<div id="toast"></div>
+<script>
+var ITEMS=[
+  {id:1,name:"Canon EOS 200D DSLR Camera",cat:"Photography",price:200,rating:4.9,reviews:18,loc:"IIT Bombay",img:"https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=500&q=80",avail:true,owner:"Priya N.",desc:"Professional DSLR with 18-55mm kit lens. Battery, charger and carry bag included. Perfect for project presentations and events."},
+  {id:2,name:"Casio fx-991EX ClassWiz Calculator",cat:"Calculators",price:25,rating:4.8,reviews:32,loc:"NIT Trichy",img:"https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=500&q=80",avail:true,owner:"Arjun S.",desc:"552 functions, spreadsheet calculations, QR code. Comes with full user manual and protective case. Approved for all exams."},
+  {id:3,name:"SG Players Special Cricket Bat",cat:"Sports",price:80,rating:4.7,reviews:11,loc:"VIT Vellore",img:"https://images.unsplash.com/photo-1531415074968-036ba1b575da?w=500&q=80",avail:true,owner:"Rohit K.",desc:"English Willow Grade 1 bat. Weight 1150-1180g. Full-size, oiled and ready to play."},
+  {id:4,name:"Ergonomic Laptop Stand Adjustable",cat:"Electronics",price:40,rating:4.9,reviews:27,loc:"IIT Delhi",img:"https://images.unsplash.com/photo-1593640495253-23196b27a87f?w=500&q=80",avail:true,owner:"Rahul K.",desc:"Premium aluminium stand with 6 height adjustments. Fits laptops 11-17 inches. Foldable and portable."},
+  {id:5,name:"Engineering Mathematics Textbooks Set",cat:"Books",price:30,rating:4.6,reviews:9,loc:"BITS Pilani",img:"https://images.unsplash.com/photo-1497633762265-9d179a990aa6?w=500&q=80",avail:false,owner:"Sneha P.",desc:"B.S. Grewal, Thomas Calculus, Gilbert Strang Linear Algebra and Rosen Discrete Math. Ideal for JEE/GATE prep."},
+  {id:6,name:"Foldable Study Table with Shelf",cat:"Furniture",price:60,rating:4.5,reviews:14,loc:"Anna University",img:"https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=500&q=80",avail:true,owner:"Meera R.",desc:"Compact wooden study table with bottom shelf. Perfect for hostel rooms during exam season. Easy to fold and store."},
+  {id:7,name:"Nikon D3500 DSLR + 35mm Lens",cat:"Photography",price:250,rating:5.0,reviews:6,loc:"Manipal",img:"https://images.unsplash.com/photo-1606986628253-2c8b64d5d74a?w=500&q=80",avail:true,owner:"Kiran T.",desc:"Nikon D3500 with prime 35mm f/1.8 lens. Excellent for portraits and short films. Includes 2 batteries and memory card."},
+  {id:8,name:"Bosch Power Drill with Bit Set",cat:"Tools",price:90,rating:4.7,reviews:8,loc:"IISc Bangalore",img:"https://images.unsplash.com/photo-1504148455328-c376907d081c?w=500&q=80",avail:true,owner:"Aarav J.",desc:"Bosch 550W Impact Drill with 25-piece bit set and carry case. Perfect for hostel setup and DIY projects."},
+  {id:9,name:"Badminton Racket Set (2 Rackets)",cat:"Sports",price:50,rating:4.6,reviews:22,loc:"SRCC Delhi",img:"https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?w=500&q=80",avail:true,owner:"Divya M.",desc:"2 Yonex GR-303 rackets with 10 shuttlecocks and carry bag. Good for casual play and tournaments."},
+  {id:10,name:"GoPro Hero 10 Action Camera",cat:"Electronics",price:300,rating:4.9,reviews:13,loc:"IIT Madras",img:"https://images.unsplash.com/photo-1502920917128-1aa500764cbd?w=500&q=80",avail:true,owner:"Siddharth A.",desc:"HyperSmooth 4.0 stabilization. 2 batteries, mounts, waterproof housing and 64GB SD card included."},
+  {id:11,name:"HP 35s Programmable Calculator",cat:"Calculators",price:35,rating:4.4,reviews:7,loc:"IIT Kharagpur",img:"https://images.unsplash.com/photo-1587145820266-a5951ee6f620?w=500&q=80",avail:true,owner:"Tanvi S.",desc:"GATE-approved programmable calculator with RPN and algebraic modes. 30KB memory with case."},
+  {id:12,name:"DSA Books Bundle (5 books)",cat:"Books",price:20,rating:4.8,reviews:41,loc:"NSIT Delhi",img:"https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=500&q=80",avail:true,owner:"Vikram G.",desc:"CLRS, CTCI, Sedgewick Algorithms, Head First DSA, and Competitive Programming by Halim. Essential for placements."},
+  {id:13,name:"JBL Flip 5 Bluetooth Speaker",cat:"Electronics",price:70,rating:4.8,reviews:19,loc:"Delhi University",img:"https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=500&q=80",avail:true,owner:"Ayesha K.",desc:"12-hour playback, IPX7 waterproof, 20W output. Great for hostel parties and outdoor sessions."},
+  {id:14,name:"Boho Hanging Chair with Cushion",cat:"Furniture",price:45,rating:4.3,reviews:5,loc:"IIIT Hyderabad",img:"https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?w=500&q=80",avail:false,owner:"Preethi N.",desc:"Stylish swing chair supports up to 100kg. Comes with ceiling hook, rope and installation guide."},
+  {id:15,name:"Yamaha F280 Acoustic Guitar",cat:"Music",price:55,rating:4.7,reviews:16,loc:"Fergusson Pune",img:"https://images.unsplash.com/photo-1510915361894-db8b60106cb1?w=500&q=80",avail:true,owner:"Nikhil V.",desc:"Dreadnought acoustic guitar. Excellent tone for beginners and intermediate players. Includes gig bag, extra strings, capo and picks."},
+];
+
+var CONVOS=[
+  {id:1,name:"Arjun Sharma",item:"DSLR Camera",av:"A",color:"linear-gradient(135deg,#2563EB,#1D4ED8)",msgs:[{me:false,text:"Hey! Is the Canon EOS 200D available for Dec 10-14?",time:"10:24 AM"},{me:true,text:"Yes it's available! Are you looking to rent for 5 days?",time:"10:26 AM"},{me:false,text:"Yes exactly. What's the pickup location?",time:"10:28 AM"},{me:true,text:"Hostel Block C, Room 204. I can also meet at the library.",time:"10:30 AM"},{me:false,text:"Library works! Can I come at 5 PM tomorrow?",time:"10:31 AM"},{me:true,text:"Perfect, see you then! I'll bring the charger and bag too.",time:"10:32 AM"}],unread:true},
+  {id:2,name:"Priya Nair",item:"Cricket Bat",av:"P",color:"linear-gradient(135deg,#22C55E,#16A34A)",msgs:[{me:false,text:"Is the cricket bat available this weekend?",time:"Yesterday"},{me:true,text:"Yes! Which dates do you need?",time:"Yesterday"},{me:false,text:"Saturday and Sunday, how much for 2 days?",time:"Yesterday"},{me:true,text:"That'd be 160 rupees. I'll confirm the booking.",time:"Yesterday"},{me:false,text:"Sure, I'll pick it up tomorrow!",time:"Yesterday"}],unread:false},
+  {id:3,name:"Rohan Mehta",item:"Study Table",av:"R",color:"linear-gradient(135deg,#F59E0B,#D97706)",msgs:[{me:false,text:"The table was in great condition. Thanks!",time:"2 days ago"},{me:true,text:"Glad it helped! Feel free to rent again anytime.",time:"2 days ago"},{me:false,text:"Thank you, great experience!",time:"2 days ago"}],unread:false},
+  {id:4,name:"Meera Rao",item:"Nikon D3500",av:"M",color:"linear-gradient(135deg,#8B5CF6,#6D28D9)",msgs:[{me:false,text:"Can I extend my rental for 2 more days?",time:"3 days ago"},{me:true,text:"Sure! I'll update the booking dates. 500 rupees extra.",time:"3 days ago"},{me:false,text:"Perfect, payment sent!",time:"3 days ago"}],unread:true},
+];
+
+// STATE
+var S={page:'home',detailId:null,dashTab:'overview',activeConvo:0,favs:{},bSearch:'',bSort:'popular',convos:JSON.parse(JSON.stringify(CONVOS))};
+
+function go(page,extra){
+  S.page=page;
+  if(page==='detail'&&extra)S.detailId=extra;
+  if(page==='dashboard')S.dashTab='overview';
+  render();
+  window.scrollTo(0,0);
+  document.querySelectorAll('.nav-links button').forEach(function(b){b.classList.remove('active');});
+  var nb=document.getElementById('nb-'+page);
+  if(nb)nb.classList.add('active');
+}
+
+function render(){
+  var app=document.getElementById('app');
+  if(S.page==='home')app.innerHTML=renderHome();
+  else if(S.page==='browse')app.innerHTML=renderBrowse();
+  else if(S.page==='detail')app.innerHTML=renderDetail();
+  else if(S.page==='post')app.innerHTML=renderPost();
+  else if(S.page==='dashboard')app.innerHTML=renderDashboard();
+  else if(S.page==='messages'){app.innerHTML=renderMessages();setTimeout(function(){var b=document.getElementById('chat-body');if(b)b.scrollTop=b.scrollHeight;},50);}
+  else if(S.page==='profile')app.innerHTML=renderProfile();
+}
+
+function itemCard(item){
+  var fav=S.favs[item.id]?'❤️':'🤍';
+  return '<div class="ic" onclick="go(\'detail\','+item.id+')">'+
+    '<div class="ic-img">'+
+    '<img src="'+item.img+'" alt="'+item.name+'" loading="lazy">'+
+    '<span class="ic-avail'+(item.avail?'':' ic-unavail')+'">'+(item.avail?'Available':'Unavailable')+'</span>'+
+    '<button class="ic-fav" onclick="toggleFav(event,'+item.id+')">'+fav+'</button>'+
+    '</div>'+
+    '<div class="ic-body">'+
+    '<div class="ic-cat">'+item.cat+'</div>'+
+    '<div class="ic-name">'+item.name+'</div>'+
+    '<div class="ic-row"><div class="ic-price">₹'+item.price+'<span>/day</span></div><div class="ic-star"><span class="star">★</span> '+item.rating+' ('+item.reviews+')</div></div>'+
+    '<div class="ic-loc">📍 '+item.loc+' · '+item.owner+'</div>'+
+    '<button class="ic-btn" onclick="go(\'detail\','+item.id+')">View Details</button>'+
+    '</div></div>';
+}
+
+function renderHome(){
+  var cards=ITEMS.slice(0,8).map(itemCard).join('');
+  return '<section class="hero">'+
+    '<div class="hero-badge">🎓 <b>1,200+</b> students renting on campus</div>'+
+    '<h1>Rent What You Need.<br><em>Share What You Own.</em></h1>'+
+    '<p>The smartest way for students to rent gear, books and equipment — at prices that don\'t break the bank.</p>'+
+    '<div class="hero-search"><input type="text" id="hs-input" placeholder="Search for a camera, textbook, cricket bat…" onkeydown="if(event.key===\'Enter\')heroSearch()"><button onclick="heroSearch()">Search</button></div>'+
+    '<div class="hero-ctas"><button class="btn-green" onclick="go(\'browse\')">Browse Items</button><button class="btn-outline-w" onclick="go(\'post\')">List an Item →</button></div>'+
+    '<div class="hero-stats"><div class="hs"><strong>1,240+</strong><span>Active Listings</span></div><div class="hs"><strong>850+</strong><span>Students</span></div><div class="hs"><strong>4.9★</strong><span>Avg Rating</span></div><div class="hs"><strong>₹0</strong><span>Platform Fee</span></div></div>'+
+    '</section>'+
+    '<section class="sec"><div class="container"><div class="sec-hd"><div class="sec-tag">Popular Right Now</div><h2 class="sec-title">Featured Rentals</h2><p class="sec-sub">Top-rated items available near your campus</p></div>'+
+    '<div class="grid-4">'+cards+'</div>'+
+    '<div style="text-align:center;margin-top:32px"><button class="btn-blue" style="padding:12px 32px;border-radius:50px;font-size:15px" onclick="go(\'browse\')">View All Items →</button></div></div></section>'+
+    '<section class="how"><div class="container"><div class="sec-hd"><div class="sec-tag">Simple & Fast</div><h2 class="sec-title">How CampusRent Works</h2><p class="sec-sub">Three easy steps to rent or earn</p></div>'+
+    '<div class="how-cards">'+
+    '<div class="how-card"><div class="how-num">1</div><div class="how-ico">📦</div><h3>List Your Item</h3><p>Post your item in under 2 minutes. Set your price and availability. Completely free.</p></div>'+
+    '<div class="how-card"><div class="how-num">2</div><div class="how-ico">🔍</div><h3>Browse & Book</h3><p>Find what you need from verified students nearby. Check ratings and confirm instantly.</p></div>'+
+    '<div class="how-card"><div class="how-num">3</div><div class="how-ico">💸</div><h3>Save Big</h3><p>Rent for a fraction of retail prices. Owners earn passive income. No middlemen.</p></div>'+
+    '</div></div></section>'+
+    '<section class="sec"><div class="container"><div class="sec-hd"><div class="sec-tag">Browse by Type</div><h2 class="sec-title">Popular Categories</h2><p class="sec-sub">Whatever you need — we\'ve got it</p></div>'+
+    '<div class="cats">'+
+    '<div class="cat" onclick="browseByCategory(\'Electronics\')"><div class="cat-ico">💻</div><div class="cat-name">Electronics</div><div class="cat-cnt">234 items</div></div>'+
+    '<div class="cat" onclick="browseByCategory(\'Books\')"><div class="cat-ico">📚</div><div class="cat-name">Books</div><div class="cat-cnt">182 items</div></div>'+
+    '<div class="cat" onclick="browseByCategory(\'Sports\')"><div class="cat-ico">🏏</div><div class="cat-name">Sports</div><div class="cat-cnt">97 items</div></div>'+
+    '<div class="cat" onclick="browseByCategory(\'Furniture\')"><div class="cat-ico">🪑</div><div class="cat-name">Furniture</div><div class="cat-cnt">64 items</div></div>'+
+    '<div class="cat" onclick="browseByCategory(\'Tools\')"><div class="cat-ico">🔧</div><div class="cat-name">Tools</div><div class="cat-cnt">41 items</div></div>'+
+    '<div class="cat" onclick="browseByCategory(\'Calculators\')"><div class="cat-ico">🧮</div><div class="cat-name">Calculators</div><div class="cat-cnt">58 items</div></div>'+
+    '<div class="cat" onclick="browseByCategory(\'Photography\')"><div class="cat-ico">📷</div><div class="cat-name">Photography</div><div class="cat-cnt">29 items</div></div>'+
+    '<div class="cat" onclick="browseByCategory(\'Music\')"><div class="cat-ico">🎸</div><div class="cat-name">Music</div><div class="cat-cnt">33 items</div></div>'+
+    '</div></div></section>'+
+    '<section class="testi-wrap"><div class="container"><div class="sec-hd"><div class="sec-tag">Real Students</div><h2 class="sec-title">What Students Say</h2><p class="sec-sub">Trusted by students across campuses</p></div>'+
+    '<div class="grid-3">'+
+    '<div class="testi-card"><div class="tc-stars">★★★★★</div><p class="tc-text">"Rented a DSLR camera for my project. Saved ₹3,000 compared to renting from a shop. Super helpful owner!"</p><div class="tc-user"><div class="tc-av" style="background:linear-gradient(135deg,#2563EB,#1D4ED8)">A</div><div><div class="tc-name">Arjun Sharma</div><div class="tc-uni">IIT Bombay · 3rd Year</div></div></div></div>'+
+    '<div class="testi-card"><div class="tc-stars">★★★★★</div><p class="tc-text">"Listed my old textbooks and made ₹1,200 in a month. CampusRent makes it so easy to earn from idle stuff!"</p><div class="tc-user"><div class="tc-av" style="background:linear-gradient(135deg,#22C55E,#16A34A)">P</div><div><div class="tc-name">Priya Nair</div><div class="tc-uni">NIT Trichy · Final Year</div></div></div></div>'+
+    '<div class="testi-card"><div class="tc-stars">★★★★☆</div><p class="tc-text">"Rented a study table for a week during exams — total game changer. The chat feature makes coordination super easy."</p><div class="tc-user"><div class="tc-av" style="background:linear-gradient(135deg,#F59E0B,#D97706)">R</div><div><div class="tc-name">Rohan Mehta</div><div class="tc-uni">VIT Vellore · 2nd Year</div></div></div></div>'+
+    '</div></div></section>'+
+    '<footer><div class="container">'+
+    '<div class="footer-grid">'+
+    '<div class="f-brand"><div class="nav-logo" style="color:#fff"><div class="logo-box">🎓</div><div>Campus<span style="color:#60A5FA">Rent</span></div></div><p>The peer-to-peer rental marketplace built for students. Rent smarter. Earn easier.</p></div>'+
+    '<div class="f-col"><h4>Platform</h4><ul><li><a href="#" onclick="go(\'browse\')">Browse Items</a></li><li><a href="#" onclick="go(\'post\')">List an Item</a></li><li><a href="#">How It Works</a></li></ul></div>'+
+    '<div class="f-col"><h4>Company</h4><ul><li><a href="#">About Us</a></li><li><a href="#">Blog</a></li><li><a href="#">Contact</a></li></ul></div>'+
+    '<div class="f-col"><h4>Legal</h4><ul><li><a href="#">Terms</a></li><li><a href="#">Privacy</a></li><li><a href="#">Help</a></li></ul></div>'+
+    '</div><div class="f-bottom"><p>© 2025 CampusRent. Made with ❤️ for students.</p><p>🎓 Empowering students across India</p></div></div></footer>';
+}
+
+function renderBrowse(){
+  var data=ITEMS.slice();
+  if(S.bSearch){var q=S.bSearch.toLowerCase();data=data.filter(function(i){return i.name.toLowerCase().indexOf(q)>=0||i.cat.toLowerCase().indexOf(q)>=0;});}
+  if(S.bSort==='price-low')data.sort(function(a,b){return a.price-b.price;});
+  else if(S.bSort==='price-high')data.sort(function(a,b){return b.price-a.price;});
+  else if(S.bSort==='rating')data.sort(function(a,b){return b.rating-a.rating;});
+  var cards=data.map(itemCard).join('')||'<p style="color:var(--t2);padding:30px;grid-column:1/-1">No items found. Try a different search.</p>';
+  return '<div class="browse-wrap">'+
+    '<aside class="fsidebar">'+
+    '<div class="fs-title">🔍 Filters</div>'+
+    '<div class="fs-grp"><h4>Category</h4>'+
+    ['Electronics','Books','Sports','Furniture','Tools','Calculators','Photography','Music'].map(function(c){return '<div class="fopt"><input type="checkbox" id="fc-'+c+'" onchange="filterCat()"><label for="fc-'+c+'">'+c+'</label></div>';}).join('')+
+    '</div>'+
+    '<div class="fs-grp"><h4>Price Range (₹/day)</h4>'+
+    '<input type="range" class="frange" min="0" max="500" value="500" id="price-range" oninput="document.getElementById(\'pr-val\').textContent=\'₹\'+this.value">'+
+    '<div class="frange-vals"><span>₹0</span><span id="pr-val">₹500</span></div></div>'+
+    '<div class="fs-grp"><h4>Availability</h4>'+
+    '<div class="fopt"><input type="radio" name="avail" id="av-any" checked><label for="av-any">Any time</label></div>'+
+    '<div class="fopt"><input type="radio" name="avail" id="av-now"><label for="av-now">Available now</label></div></div>'+
+    '<button class="apply-btn" onclick="toast(\'Filters applied!\',\'✅\')">Apply Filters</button>'+
+    '</aside>'+
+    '<main>'+
+    '<div class="browse-topbar">'+
+    '<div class="b-search"><input type="text" id="bs-input" placeholder="Search items…" value="'+S.bSearch+'" onkeydown="if(event.key===\'Enter\')browseSearch()"><button onclick="browseSearch()">Search</button></div>'+
+    '<div class="b-sort"><select onchange="S.bSort=this.value;render()">'+
+    '<option value="popular"'+(S.bSort==='popular'?' selected':'')+'>Most Popular</option>'+
+    '<option value="price-low"'+(S.bSort==='price-low'?' selected':'')+'>Price: Low to High</option>'+
+    '<option value="price-high"'+(S.bSort==='price-high'?' selected':'')+'>Price: High to Low</option>'+
+    '<option value="rating"'+(S.bSort==='rating'?' selected':'')+'>Top Rated</option>'+
+    '</select></div>'+
+    '<span class="b-count">'+data.length+' item'+(data.length!==1?'s':'')+'</span>'+
+    '</div>'+
+    '<div class="grid-4">'+cards+'</div>'+
+    '<div class="pag">'+
+    '<button class="pag-btn on">1</button>'+
+    '<button class="pag-btn" onclick="toast(\'Loading more items…\',\'📦\')">2</button>'+
+    '<button class="pag-btn" onclick="toast(\'Loading more items…\',\'📦\')">3</button>'+
+    '</div></main></div>';
+}
+
+function renderDetail(){
+  var item=ITEMS.filter(function(i){return i.id===S.detailId;})[0];
+  if(!item)return '<p style="padding:60px;text-align:center;font-size:16px">Item not found. <button onclick="go(\'browse\')" style="color:var(--blue);background:none;cursor:pointer;text-decoration:underline">Go back to Browse</button></p>';
+  return '<div class="detail-wrap">'+
+    '<div>'+
+    '<div class="d-gallery">'+
+    '<div class="d-main-img"><img src="'+item.img+'" alt="'+item.name+'"></div>'+
+    '<div class="d-thumbs">'+
+    '<div class="d-thumb on"><img src="'+item.img+'"></div>'+
+    '<div class="d-thumb" style="filter:brightness(.85)"><img src="'+item.img+'"></div>'+
+    '<div class="d-thumb" style="filter:saturate(1.5)"><img src="'+item.img+'"></div>'+
+    '</div></div>'+
+    '<div class="d-info">'+
+    '<div class="d-toprow"><span class="d-cat">'+item.cat+'</span><span class="d-avail">'+(item.avail?'✓ Available':'✗ Unavailable')+'</span></div>'+
+    '<h1 class="d-title">'+item.name+'</h1>'+
+    '<div class="d-meta"><span><span class="star">★</span> '+item.rating+' · '+item.reviews+' reviews</span><span>📍 '+item.loc+'</span></div>'+
+    '<div class="d-owner">'+
+    '<div class="o-av">'+item.owner[0]+'</div>'+
+    '<div class="o-info"><h4>'+item.owner+'</h4><p>⭐ 4.8 · Verified Student · 12 successful rentals</p></div>'+
+    '<button class="bs bs-view" style="margin-left:auto" onclick="go(\'messages\')">💬 Message</button>'+
+    '</div>'+
+    '<div class="d-desc"><h3>About this item</h3><p>'+item.desc+'</p></div>'+
+    '</div></div>'+
+    '<div><div class="bk-card">'+
+    '<div class="bk-price">₹'+item.price+' <span>/ day</span></div>'+
+    '<div class="bk-rate"><span class="star">★</span> '+item.rating+' · '+item.reviews+' reviews</div>'+
+    '<div class="bk-fg"><label>Start Date</label><input type="date" id="bk-s" onchange="calcTotal('+item.price+')"></div>'+
+    '<div class="bk-fg"><label>End Date</label><input type="date" id="bk-e" onchange="calcTotal('+item.price+')"></div>'+
+    '<div class="bk-total" id="bk-total" style="display:none">'+
+    '<div class="bk-row" id="bk-days-row"><span></span><span></span></div>'+
+    '<div class="bk-row"><span>Service fee</span><span>₹0</span></div>'+
+    '<div class="bk-row bold"><span>Total</span><span id="bk-tot-val">₹0</span></div>'+
+    '</div>'+
+    '<button class="bk-book" onclick="doBook()">🔒 Book Now</button>'+
+    '<button class="bk-msg" onclick="go(\'messages\')">💬 Message Owner</button>'+
+    '</div></div></div>';
+}
+
+function renderPost(){
+  return '<div class="post-wrap">'+
+    '<div class="post-hd"><h1>📦 List Your Item</h1><p>Share what you own and start earning. Takes less than 2 minutes.</p></div>'+
+    '<div class="pcard"><div class="pcard-ttl">Item Information</div>'+
+    '<div class="fg"><label>Item Title *</label><input type="text" placeholder="e.g. Canon EOS 200D DSLR Camera"></div>'+
+    '<div class="fg-row"><div class="fg"><label>Category *</label><select><option value="">Select category</option><option>Electronics</option><option>Books & Textbooks</option><option>Sports Equipment</option><option>Furniture</option><option>Tools</option><option>Calculators</option><option>Photography</option><option>Music Instruments</option><option>Other</option></select></div>'+
+    '<div class="fg"><label>Condition *</label><select><option>Like New</option><option>Good</option><option>Fair</option></select></div></div>'+
+    '<div class="fg"><label>Description *</label><textarea placeholder="Describe your item — brand, model, accessories, usage notes…"></textarea></div></div>'+
+    '<div class="pcard"><div class="pcard-ttl">Photos</div>'+
+    '<div class="upload-zone" onclick="toast(\'Click to select your images\',\'📷\')"><div style="font-size:36px">📷</div><p>Click to upload photos or drag & drop</p><small>PNG, JPG up to 10MB · Up to 5 photos</small></div></div>'+
+    '<div class="pcard"><div class="pcard-ttl">Pricing & Availability</div>'+
+    '<div class="fg-row"><div class="fg"><label>Price Per Day (₹) *</label><input type="number" placeholder="e.g. 150"></div>'+
+    '<div class="fg"><label>Security Deposit (₹)</label><input type="number" placeholder="Optional"></div></div>'+
+    '<div class="fg-row"><div class="fg"><label>Available From</label><input type="date"></div>'+
+    '<div class="fg"><label>Available Until</label><input type="date"></div></div></div>'+
+    '<div class="pcard"><div class="pcard-ttl">Location & Contact</div>'+
+    '<div class="fg"><label>Your Campus / Location *</label><input type="text" placeholder="e.g. IIT Bombay, Powai, Mumbai"></div>'+
+    '<div class="fg"><label>Contact Preference</label><select><option>In-app Chat (Recommended)</option><option>Phone Call</option><option>WhatsApp</option><option>Email</option></select></div></div>'+
+    '<button class="pub-btn" onclick="publishListing()">🚀 Publish Listing</button></div>';
+}
+
+function renderDashboard(){
+  var content='';
+  if(S.dashTab==='overview') content=dashOverview();
+  else if(S.dashTab==='listings') content=dashListings();
+  else if(S.dashTab==='bookings') content=dashBookings();
+  else if(S.dashTab==='payments') content=dashPayments();
+  return '<div class="dash-wrap">'+
+    '<aside class="sidebar">'+
+    '<div class="sb-top"><div class="sb-av">R</div><div class="sb-name">Rahul Kapoor</div><div class="sb-uni">IIT Delhi · 3rd Year</div></div>'+
+    '<nav class="sb-nav">'+
+    '<button class="'+(S.dashTab==='overview'?'on':'')+'" onclick="setDashTab(\'overview\')"><span class="sb-ico">📊</span> Overview</button>'+
+    '<button class="'+(S.dashTab==='listings'?'on':'')+'" onclick="setDashTab(\'listings\')"><span class="sb-ico">📦</span> My Listings</button>'+
+    '<button class="'+(S.dashTab==='bookings'?'on':'')+'" onclick="setDashTab(\'bookings\')"><span class="sb-ico">📅</span> My Rentals</button>'+
+    '<button onclick="go(\'messages\')"><span class="sb-ico">💬</span> Messages</button>'+
+    '<button onclick="go(\'profile\')"><span class="sb-ico">👤</span> Profile</button>'+
+    '<button class="'+(S.dashTab==='payments'?'on':'')+'" onclick="setDashTab(\'payments\')"><span class="sb-ico">💳</span> Payments</button>'+
+    '</nav></aside>'+
+    '<main>'+content+'</main></div>';
+}
+
+function dashOverview(){
+  var myItems=ITEMS.slice(3,7).map(function(i){
+    return '<div class="lc"><div class="lc-img"><img src="'+i.img+'" alt="'+i.name+'"></div>'+
+      '<div class="lc-info"><div class="lc-name">'+i.name+'</div><div class="lc-sub">₹'+i.price+'/day · '+i.loc+'</div></div>'+
+      '<div class="lc-acts"><button class="bs bs-edit" onclick="toast(\'Edit form opened\',\'✏️\')">Edit</button><button class="bs bs-del" onclick="toast(\'Listing removed\',\'🗑️\')">Delete</button></div></div>';
+  }).join('');
+  return '<div class="stat-row">'+
+    '<div class="scard"><div class="scard-lbl">Active Listings</div><div class="scard-val">4</div><div class="scard-chg chg-up">↑ 1 this week</div></div>'+
+    '<div class="scard"><div class="scard-lbl">Total Earnings</div><div class="scard-val">₹3,240</div><div class="scard-chg chg-up">↑ ₹480 this month</div></div>'+
+    '<div class="scard"><div class="scard-lbl">Bookings</div><div class="scard-val">12</div><div class="scard-chg chg-up">↑ 3 new</div></div>'+
+    '<div class="scard"><div class="scard-lbl">Your Rating</div><div class="scard-val">4.8★</div><div class="scard-chg chg-up">Excellent</div></div>'+
+    '</div>'+
+    '<div class="sec-hd2"><h2>Recent Bookings</h2><a onclick="setDashTab(\'bookings\')">View all →</a></div>'+
+    '<div class="tbl"><table><thead><tr><th>Item</th><th>Renter</th><th>Dates</th><th>Amount</th><th>Status</th></tr></thead><tbody>'+
+    '<tr><td><b>DSLR Camera</b></td><td>Arjun S.</td><td>Dec 10–14</td><td>₹800</td><td><span class="badge b-green">Confirmed</span></td></tr>'+
+    '<tr><td><b>Cricket Bat</b></td><td>Priya M.</td><td>Dec 12–13</td><td>₹120</td><td><span class="badge b-yellow">Pending</span></td></tr>'+
+    '<tr><td><b>Casio fx-991</b></td><td>Rohit K.</td><td>Dec 5–9</td><td>₹75</td><td><span class="badge b-purple">Completed</span></td></tr>'+
+    '</tbody></table></div>'+
+    '<div class="sec-hd2"><h2>My Listings</h2><a onclick="setDashTab(\'listings\')">Manage →</a></div>'+
+    myItems;
+}
+function dashListings(){
+  return '<div class="sec-hd2"><h2>My Listings</h2><button class="btn-blue" style="padding:8px 18px;border-radius:50px;font-size:13px" onclick="go(\'post\')">+ Add New</button></div>'+
+    ITEMS.slice(3,9).map(function(i){
+      return '<div class="lc"><div class="lc-img"><img src="'+i.img+'" alt="'+i.name+'"></div>'+
+        '<div class="lc-info"><div class="lc-name">'+i.name+'</div><div class="lc-sub">₹'+i.price+'/day · ⭐'+i.rating+' · '+i.loc+'</div></div>'+
+        '<div class="lc-acts"><button class="bs bs-view" onclick="go(\'detail\','+i.id+')">View</button><button class="bs bs-edit" onclick="toast(\'Edit form opened\',\'✏️\')">Edit</button><button class="bs bs-del" onclick="toast(\'Listing removed\',\'🗑️\')">Delete</button></div></div>';
+    }).join('');
+}
+function dashBookings(){
+  return '<div class="sec-hd2"><h2>My Rentals</h2></div>'+
+    '<div class="tbl"><table><thead><tr><th>Item</th><th>Owner</th><th>Start</th><th>End</th><th>Total</th><th>Status</th></tr></thead><tbody>'+
+    '<tr><td><b>Nikon D3500</b></td><td>Meera R.</td><td>Dec 15</td><td>Dec 18</td><td>₹900</td><td><span class="badge b-green">Confirmed</span></td></tr>'+
+    '<tr><td><b>Engineering Math</b></td><td>Kiran T.</td><td>Dec 10</td><td>Dec 20</td><td>₹150</td><td><span class="badge b-yellow">Pending</span></td></tr>'+
+    '<tr><td><b>Study Table</b></td><td>Aarav S.</td><td>Nov 25</td><td>Dec 1</td><td>₹420</td><td><span class="badge b-purple">Completed</span></td></tr>'+
+    '<tr><td><b>JBL Speaker</b></td><td>Ayesha K.</td><td>Nov 18</td><td>Nov 20</td><td>₹140</td><td><span class="badge b-purple">Completed</span></td></tr>'+
+    '</tbody></table></div>';
+}
+function dashPayments(){
+  return '<div class="sec-hd2"><h2>Payments</h2></div>'+
+    '<div class="tbl"><table><thead><tr><th>Transaction</th><th>Date</th><th>Amount</th><th>Type</th></tr></thead><tbody>'+
+    '<tr><td>DSLR Camera rental</td><td>Dec 14</td><td>₹800</td><td><span class="badge b-green">Credit</span></td></tr>'+
+    '<tr><td>Laptop Stand rental</td><td>Dec 7</td><td>₹210</td><td><span class="badge b-green">Credit</span></td></tr>'+
+    '<tr><td>Nikon D3500 (rented)</td><td>Dec 15</td><td>₹900</td><td><span class="badge b-yellow">Debit</span></td></tr>'+
+    '<tr><td>Cricket Bat rental</td><td>Nov 20</td><td>₹160</td><td><span class="badge b-green">Credit</span></td></tr>'+
+    '</tbody></table></div>';
+}
+
+function renderMessages(){
+  var c=S.convos[S.activeConvo];
+  var list=S.convos.map(function(cv,idx){
+    return '<div class="mi'+(idx===S.activeConvo?' on':'')+'" onclick="switchConvo('+idx+')">'+
+      '<div class="m-av" style="background:'+cv.color+'">'+cv.av+'</div>'+
+      '<div class="mi-info"><div class="mi-name">'+cv.name+'</div><div class="mi-prev">'+cv.msgs[cv.msgs.length-1].text+'</div></div>'+
+      '<div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">'+
+      '<span class="mi-time">'+cv.msgs[cv.msgs.length-1].time+'</span>'+
+      (cv.unread?'<span class="mi-dot"></span>':'')+
+      '</div></div>';
+  }).join('');
+  var bubbles=c.msgs.map(function(m){
+    return '<div class="bubble '+(m.me?'b-me':'b-them')+'">'+m.text+'<div class="b-time">'+m.time+'</div></div>';
+  }).join('');
+  return '<div class="msg-wrap">'+
+    '<div class="msg-box">'+
+    '<div class="msg-list-panel"><div class="mlp-head">💬 Messages</div><div class="ml-scroll">'+list+'</div></div>'+
+    '<div class="chat-panel">'+
+    '<div class="chat-head"><div class="m-av" style="background:'+c.color+'">'+c.av+'</div><div class="ch-info"><h3>'+c.name+'</h3><p>'+c.item+'</p></div></div>'+
+    '<div class="chat-body" id="chat-body">'+bubbles+'</div>'+
+    '<div class="chat-input"><input class="ci" id="msg-in" type="text" placeholder="Type a message…" onkeydown="if(event.key===\'Enter\')sendMsg()"><button class="cs" onclick="sendMsg()">➤</button></div>'+
+    '</div></div></div>';
+}
+
+function renderProfile(){
+  return '<div class="profile-wrap">'+
+    '<div class="prof-banner"></div>'+
+    '<div class="prof-card">'+
+    '<div class="prof-av-row"><div class="prof-av">R</div><button class="edit-btn" onclick="toast(\'Edit profile opened\',\'✏️\')">✏️ Edit Profile</button></div>'+
+    '<div class="prof-name">Rahul Kapoor</div>'+
+    '<div class="prof-uni">🎓 IIT Delhi · B.Tech Computer Science · 3rd Year</div>'+
+    '<div class="prof-stats">'+
+    '<div class="ps"><strong>4</strong><span>Listings</span></div>'+
+    '<div class="ps"><strong>12</strong><span>Rentals</span></div>'+
+    '<div class="ps"><strong>4.8★</strong><span>Rating</span></div>'+
+    '<div class="ps"><strong>₹3,240</strong><span>Earned</span></div>'+
+    '</div></div>'+
+    '<div class="rv-ttl">⭐ Reviews (8)</div>'+
+    '<div class="rv-card"><div class="rv-stars">★★★★★</div><div class="rv-text">"Rahul was super cooperative. The DSLR was exactly as described. Very trustworthy!"</div><div class="rv-auth">Arjun Sharma · Dec 2025</div></div>'+
+    '<div class="rv-card"><div class="rv-stars">★★★★★</div><div class="rv-text">"Fast response, flexible pickup. The laptop stand was great quality. Would rent again!"</div><div class="rv-auth">Sneha Pillai · Nov 2025</div></div>'+
+    '<div class="rv-card"><div class="rv-stars">★★★★☆</div><div class="rv-text">"Good experience overall. Item was as described. Communication was quick and smooth."</div><div class="rv-auth">Kiran Tiwari · Oct 2025</div></div>'+
+    '</div>';
+}
+
+// ACTIONS
+function heroSearch(){var v=document.getElementById('hs-input').value.trim();S.bSearch=v;go('browse');}
+function browseSearch(){var v=document.getElementById('bs-input').value.trim();S.bSearch=v;render();}
+function browseByCategory(cat){S.bSearch=cat;go('browse');}
+function filterCat(){
+  var checked=['Electronics','Books','Sports','Furniture','Tools','Calculators','Photography','Music'].filter(function(c){var el=document.getElementById('fc-'+c);return el&&el.checked;});
+  S.bSearch=checked.length?checked[0]:'';render();
+}
+function setDashTab(tab){S.dashTab=tab;render();window.scrollTo(0,0);}
+function toggleFav(e,id){
+  e.stopPropagation();
+  S.favs[id]=!S.favs[id];
+  e.target.textContent=S.favs[id]?'❤️':'🤍';
+  toast(S.favs[id]?'Added to wishlist!':'Removed from wishlist',S.favs[id]?'❤️':'🤍');
+}
+function calcTotal(price){
+  var s=document.getElementById('bk-s').value;
+  var e=document.getElementById('bk-e').value;
+  if(!s||!e)return;
+  var days=Math.ceil((new Date(e)-new Date(s))/86400000);
+  if(days<=0){toast('End date must be after start date','⚠️');return;}
+  var total=days*price;
+  document.getElementById('bk-days-row').innerHTML='<span>₹'+price+' × '+days+' day'+(days>1?'s':'')+'</span><span>₹'+total+'</span>';
+  document.getElementById('bk-tot-val').textContent='₹'+total;
+  document.getElementById('bk-total').style.display='block';
+}
+function doBook(){
+  var s=document.getElementById('bk-s');
+  var e=document.getElementById('bk-e');
+  if(!s||!e||!s.value||!e.value){toast('Please select rental dates first','⚠️');return;}
+  toast('🎉 Booking confirmed! Check your dashboard.','✅');
+  setTimeout(function(){go('dashboard');},1400);
+}
+function publishListing(){
+  toast('🎉 Listing published successfully!','✅');
+  setTimeout(function(){go('browse');},1400);
+}
+function switchConvo(idx){
+  S.activeConvo=idx;
+  S.convos[idx].unread=false;
+  render();
+  setTimeout(function(){var b=document.getElementById('chat-body');if(b)b.scrollTop=b.scrollHeight;},50);
+}
+function sendMsg(){
+  var inp=document.getElementById('msg-in');
+  var text=inp.value.trim();
+  if(!text)return;
+  S.convos[S.activeConvo].msgs.push({me:true,text:text,time:'Just now'});
+  render();
+  setTimeout(function(){
+    var body=document.getElementById('chat-body');
+    if(body)body.scrollTop=body.scrollHeight;
+    setTimeout(function(){
+      S.convos[S.activeConvo].msgs.push({me:false,text:"Thanks! I'll get back to you soon 👍",time:'Just now'});
+      render();
+      setTimeout(function(){var b=document.getElementById('chat-body');if(b)b.scrollTop=b.scrollHeight;},30);
+    },1200);
+  },30);
+}
+function toast(msg,icon){
+  var el=document.getElementById('toast');
+  el.textContent=(icon||'ℹ️')+' '+msg;
+  el.classList.add('show');
+  clearTimeout(window._tt);
+  window._tt=setTimeout(function(){el.classList.remove('show');},2800);
+}
+
+// INIT
+render();
+document.getElementById('nb-home').classList.add('active');
+</script>
+</body>
+</html>
